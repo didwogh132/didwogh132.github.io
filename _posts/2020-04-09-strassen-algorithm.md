@@ -14,60 +14,128 @@ date : 2020-04-09 18:19:00 +0900
 
   *n*×*n* 크기의 두 행렬을 곱하면 [O](https://ko.wikipedia.org/wiki/점근_표기법)(n^3)의 시간이 소요되지만 이 알고리즘은 대략 O(n^2.807)의 시간이 소요된다.
 
-- 알고리즘
 
-A와 B를 F에 포함되는 정사각행렬이라고 하자. 두 행렬의 곱을 C라고 하면 밑에 식과 같다.
 
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/f4c680ec4a32379114e0326ba69b179881b69e8e)
-
-만약 A와 B가 2^n × 2^n 꼴의 크기가 아니라면 모자라는 행과 열을 0으로 채운다. 이 경우 행렬 곱셈이 끝난 뒤 행렬에서 필요한 부분만 다시 잘라 내야한다. A, B, C를 같은 크기의 정사각행렬 네 개로 나눈다.
+행렬 A, B, C가 이렇게 있다고 치자.
 
 ![](https://wikimedia.org/api/rest_v1/media/math/render/svg/41c6337190684aff7b69f124226d6e62d79ebca5)
 
-이 때,
+그럴 때 C=AB라고 하면 
 
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/e2948b2c6caf12770b217310b956b23abdc80380)
+C(1,1) = A(1,1)B(1,1)  + A(1,2)B(2,1)
 
-다음이 성립한다.
+C(1,2) = A(1,1)B(1,2)  + A(1,2)B(2,2)
 
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/8d91fa79d27697a5c6551698c1a83a3d5837c57b)
+C(2,1) = A(2,1)B(1,1)  + A(2,2)B(2,1)
 
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/a08bea24eec9422cda82e6e04af1d96fc6822038)
+C(2,2) = A(2,1)B(1,2)  + A(1,2)B(2,2)
 
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/7adffe97db091ce8ba231352b3721bbe261985ca)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/8b40ed74cf54465d8e54d09b8492e50689928313)
-
-이 과정에서는 필요한 연산의 수가 줄어 들지 않는다. 모든 *C(i,j)* 행렬을 계산하려면 8번의 곱셈과 4번의 덧셈이 필요하다.
-
-이번엔 행렬을 이렇게 정의해본다.
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/1e9e6268d824de7ad5010a32a1921452b264f7ee)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/0d40beeba8019e378fa0ed4b6e549c44a140a9ec)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/45e8e9679d33f2c66e24bd812e1e554f95bb1571)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/c12df2bb70f8f09f33f1ca4b8c2d577d5850a2ee)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/715adfa757b74b3ad6b4eea545c24762e4079161)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/30107b9c9c99494bf75f23e84b505e5921cee46e)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/9e93ef1c265be8be96209dde36230d56e139fc72)
-
-이렇게 정의한 M 행렬들을 *C(i,j)* 행렬을 표현하는 데 쓰면 *C(i,j)* 행렬은 다음과 같이 표현된다.
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/26875b8ca1815e2c322c798faeecabe1d7836798)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/e71779a8ecc64f3e1268485cf389a05cdd3e6bf8)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/5853fa11f016df7eee4eb2a7ceb6137d3b3296de)
-
-![](https://wikimedia.org/api/rest_v1/media/math/render/svg/b7d7d4ee9e67e0c23f1a522787d4829072542dbb)
-
-이 행렬들을 계산하는 데는 M 행렬에서 총 7번의 곱셈과 10번의 덧셈이 필요하다. 그리고 *C(i,j)*를 구하는 과정에서는 8번의 덧셈이 필요하므로 전체적으로는 7번의 곱셈과 18번의 덧셈이 필요하다. 
+이렇게 된다.
 
 
 
-그리고 이 과정을 재귀적으로 반복할 경우 ![](https://wikimedia.org/api/rest_v1/media/math/render/svg/586e85e6ba93daf1db18e144da90a79af278e9a9)번의 연산이 필요하다.  ![](https://wikimedia.org/api/rest_v1/media/math/render/svg/ce05babfc0fc45343915cfe440346e34e8442bfe)이므로 전체 수행 시간은 약 O(n^2.807)이다. 
+하지만 스트라센 알고리즘을 사용하게 되면 이러한 정의를 사용한다.
+
+M1 = (A(1,1) + A(2,2))(B(1,1) + B(2,2))
+
+M2 = (A(2,1) + A(2,2))B(1,1)
+
+M3 = A(1,1)(B(1,2) - B(2,2))
+
+M4 = A(2,2)(B(2,1) - B(1,1))
+
+M5 = (A(1,1) + A(1,2))B(2,2)
+
+M6 = (A(2,1) - A(1,1))(B(1,1) + B(1,2))
+
+M7 = (A(1,2) - A(2,2))(B(2,1) + B(2,2))
+
+그리고 이러한 정의를 이용해 C(i,j)를 표현하면
+
+C(1,1) = M1 + M4 - M5 + M7
+
+C(1,2) = M3 + M5
+
+C(2,1) = M2 + M4
+
+C(2,2) = M1 - M2 + M3 + M6
+
+이다.
+
+원래 행렬의 곱셈에서는 C 행렬을 구하기 위해 총 8번의 곱셈과 4번의 덧셈이 필요하다. 하지만 스트라센 알고리즘에서는 M에서 7번의 곱셈과 10번의 덧셈이 필요하다. 그리고 C 행렬을 구하기 위해 8번의 덧셈이 필요하다. 총 7번의 곱셈과 18번의 덧셈이 필요하다. 
+
+
+
+빅오로 표현하면 기본 행렬의 곱은 n^3이고  스트라센 알고리즘은 n^2.807이 나온다.
+
+
+
+그리고 A와 B가 2^n × 2^n의 행렬로 나오지 않으면 부족한 행과 열을 0으로 채운다.
+
+그리고 A와 B를 정사각행렬로 표현해서 부분으로 나눠서 분할정복을 실시해 구한다.
+
+![](http://yimoyimo.tk/images/strassen2.png)
+
+기본 슈트라센 알고리즘 2 × 2 행렬을 C언어로 표현해보자.
+
+```c
+#include<stdio.h>
+int main(){
+    int a[2][2], b[2][2], c[2][2];
+    int m1, m2, m3, m4, m5, m6, m7;
+    
+    printf("A의 행렬을 채우세요 : ");
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            scanf("%d",&a[i][j]);
+    
+    printf("B의 행렬을 채우세요 : ");
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            scanf("%d",&b[i][j]);
+    
+    printf("A의 행렬");
+    for(int i=0;i<2;i++){
+        printf("\n");
+        for(int j=0;j<2;j++)
+            printf("%d ",a[i][j]);
+    }
+    printf("A의 행렬");
+    for(int i=0;i<2;i++){
+        printf("\n");
+        for(int j=0;j<2;j++)
+            printf("%d ",b[i][j]);
+    }
+    
+    m1 = (a[0][0] + a[1][1])*(b[0][0] + b[1][1]);
+    m2 = (a[1][0] + a[1][1])*b[0][0];
+    m3 = a[0][0]*(b[0][1] - b[1][1]);
+    m4 = a[1][1]*(b[1][0] - b[0][0]);
+    m5 = (a[0][0] + a[0][1])*b[1][1];
+    m6 = (a[1][0] - a[0][0])*(b[0][0] + b[0][1]);
+    m7 = (a[0][1] - a[1][1])*(b[1][0] + b[1][1]);
+    
+    c[0][0] = m1 + m4 - m5 + m7;
+    c[0][1] = m3+ m5;
+    c[1][0] = m2 + m4;
+    c[1][1] = m1 + m3 - m2 + m6;
+    
+    printf("\n 스트라센 알고리즘을 이용해 구한 C의 행렬\n");
+    for(int i=0;i<2;i++){
+        printf("\n");
+        for(int j=0;j<2;j++)
+            printf("%d ",b[i][j]);
+    }
+    
+    return 0;
+}
+```
+
+
+
+그리고 스트라센 알고리즘을 이용해 구하는 것과 일반 행렬 곱셈으로 구할 때를 그래프로 그려보면 이렇게 나온다.
+
+![](https://www.programmersought.com/images/450/e4d95ae55204d4bab329f2a91a7cc7ca.png)
+
+ 
+
